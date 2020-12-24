@@ -14,6 +14,8 @@ import org.bouncycastle.util.io.pem.PemGenerationException;
 import org.bouncycastle.util.io.pem.PemObject;
 import org.bouncycastle.util.io.pem.PemWriter;
 
+import javax.crypto.SecretKey;
+import javax.crypto.spec.SecretKeySpec;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.math.BigInteger;
@@ -38,9 +40,19 @@ import java.security.spec.RSAPublicKeySpec;
  * @example
  */
 public class KeyGenerator {
+    final private int AES_KEY_SIZE = 256;
+    final private String PASSPHRASE = "test";
+    final private String AES_ALGORITHM = "AES";
+    final private String RSA_ALGORITHM = "RSA";
+    final private String BC_PROVIDER = "BC";
+
+    private static KeyGenerator keyObj = null;
+
     private PrivateKey privateKey;
     private PublicKey publicKey;
     private String privateKeyPEM;
+    private SecretKey aesKey;
+    private SecretKeySpec aesKeySpec;
 
     private KeyGenerator() {
         Security.addProvider(new BouncyCastleProvider());
@@ -54,16 +66,29 @@ public class KeyGenerator {
         final RSAPrivateCrtKeyParameters privateKeyParam = (RSAPrivateCrtKeyParameters) keypair.getPrivate();
 
         try {
-            this.publicKey = KeyFactory.getInstance("RSA").generatePublic(new RSAPublicKeySpec(publicKeyParam.getModulus(), publicKeyParam.getExponent()));
-            this.privateKey = KeyFactory.getInstance("RSA").generatePrivate(new RSAPrivateCrtKeySpec(publicKeyParam.getModulus(), publicKeyParam.getExponent(), privateKeyParam.getExponent(), privateKeyParam.getP(), privateKeyParam.getQ(), privateKeyParam.getDP(), privateKeyParam.getDQ(), privateKeyParam.getQInv()));
+            this.publicKey = KeyFactory.getInstance(RSA_ALGORITHM).generatePublic(new RSAPublicKeySpec(publicKeyParam.getModulus(), publicKeyParam.getExponent()));
+            this.privateKey = KeyFactory.getInstance(RSA_ALGORITHM).generatePrivate(new RSAPrivateCrtKeySpec(publicKeyParam.getModulus(), publicKeyParam.getExponent(), privateKeyParam.getExponent(), privateKeyParam.getP(), privateKeyParam.getQ(), privateKeyParam.getDP(), privateKeyParam.getDQ(), privateKeyParam.getQInv()));
+
+            javax.crypto.KeyGenerator kgen = javax.crypto.KeyGenerator.getInstance(AES_ALGORITHM);
+            kgen.init(AES_KEY_SIZE);
+            this.aesKey = kgen.generateKey();
+            byte[] aesKey = this.aesKey.getEncoded();
+            this.aesKeySpec = new SecretKeySpec(aesKey, AES_ALGORITHM);
         }
         catch (InvalidKeySpecException | NoSuchAlgorithmException e) {
             e.printStackTrace();
         }
     }
 
+    public static KeyGenerator keyCreator() {
+        if(keyObj==null){
+            keyObj= new KeyGenerator();
+        }
+        return keyObj;
+    }
+
     private void pemGenerator() throws OperatorCreationException, IOException {
-        PKCS8Generator pemGenerator = new PKCS8Generator(PrivateKeyInfo.getInstance(getPrivateKey().getEncoded()), new JceOpenSSLPKCS8EncryptorBuilder(PKCS8Generator.AES_256_CBC).setProvider("BC").setPasssword("test".toCharArray()).build());
+        PKCS8Generator pemGenerator = new PKCS8Generator(PrivateKeyInfo.getInstance(getPrivateKey().getEncoded()), new JceOpenSSLPKCS8EncryptorBuilder(PKCS8Generator.AES_256_CBC).setProvider(BC_PROVIDER).setPasssword(PASSPHRASE.toCharArray()).build());
         PemObject pemObj = pemGenerator.generate();
         StringWriter str = new StringWriter();
         PemWriter pemWriter = new PemWriter(str);
@@ -90,7 +115,24 @@ public class KeyGenerator {
         return publicKey;
     }
 
+    public SecretKeySpec getAesKeySpec() {
+        return aesKeySpec;
+    }
+
+    public SecretKey getAesKey() {
+        return aesKey;
+    }
+
     public String getPrivateKeyPEM() {
         return privateKeyPEM;
+    }
+
+    public void setPrivateKeyPEM() {
+        try {
+            pemGenerator();
+        }
+        catch (OperatorCreationException | IOException e) {
+            e.printStackTrace();
+        }
     }
 }
