@@ -44,6 +44,11 @@ public class SecretFunctions {
     private static PublicKey publicKey;
     private static SecretKey aesKey;
 
+    /**
+     * Constructor of SecretFunctions class. Reads necessary keys for encryption and decryption from file.
+     * Generates keys if no keys exists.
+     * @author Wong Kok-Lim
+     */
     private SecretFunctions(){
         KeyWriter writer = new KeyWriter();
         KeyReader reader = new KeyReader();
@@ -80,6 +85,10 @@ public class SecretFunctions {
         }
     }
 
+    /**
+     * Calls private constructor of SecretFunctions class.
+     * @author Wong Kok-Lim
+     */
     public static void setKeys() {
         new SecretFunctions();
     }
@@ -94,6 +103,12 @@ public class SecretFunctions {
 
     }
 
+    /**
+     * PrestoSQL user defined function for AES encryption of Strings.
+     * @param privateData String to be encrypted with AES.
+     * @return AES Encrypted String.
+     * @author Wong Kok-Lim
+     */
     @Description("Encrypts a string using AES")
     @ScalarFunction("encryptAES")
     @SqlType(StandardTypes.VARCHAR)
@@ -109,6 +124,12 @@ public class SecretFunctions {
         return utf8Slice(encrypt.getEncryptedStr());
     }
 
+    /**
+     * PrestoSQL user defined function for AES encryption of Binary Data.
+     * @param privateData Binary data to be encrypted with AES.
+     * @return AES encrypted String.
+     * @author Wong Kok-Lim
+     */
     @Description("Encrypts a binary using AES")
     @ScalarFunction("encryptAES")
     @SqlType(StandardTypes.VARCHAR)
@@ -127,6 +148,12 @@ public class SecretFunctions {
 
     }
 
+    /**
+     * PrestoSQL user defined function for AES decryption of AES encrypted String.
+     * @param secureData AES encrypted String to be decrypted.
+     * @return AES decrypted String.
+     * @author Wong Kok-Lim
+     */
     @Description("Decrypts a string using AES")
     @ScalarFunction("decryptAES")
     @SqlType(StandardTypes.VARCHAR)
@@ -141,6 +168,12 @@ public class SecretFunctions {
         return utf8Slice(decrypt.getDecryptedStr());
     }
 
+    /**
+     * PrestoSQL user defined function for AES decryption of AES encrypted Binary data type.
+     * @param secureData AES encrypted String to be decrypted
+     * @return Decrypted binary value.
+     * @author Wong Kok-Lim
+     */
     @Description("Decrypts a binary using AES")
     @ScalarFunction("decryptBinaryAES")
     @SqlType(StandardTypes.VARBINARY)
