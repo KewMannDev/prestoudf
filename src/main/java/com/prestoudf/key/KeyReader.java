@@ -152,14 +152,14 @@ public class KeyReader {
     /**
      * Decrypt and read AES key from file.
      * @param pk java.security.PrivateKey to use for decryption.
-     * @return
+     * @return Decrypted AES  key.
      * @throws NoSuchPaddingException
      * @throws NoSuchAlgorithmException
      * @throws InvalidKeyException
      * @throws IOException
      * @author Wong Kok-Lim
      */
-    public SecretKey loadKey(PrivateKey pk) throws NoSuchPaddingException, NoSuchAlgorithmException, InvalidKeyException, IOException {
+    public SecretKey getAesKey(PrivateKey pk) throws NoSuchPaddingException, NoSuchAlgorithmException, InvalidKeyException, IOException {
         Cipher pkCipher = Cipher.getInstance(Config.RSA_ALGORITHM);
         // read AES key
         pkCipher.init(Cipher.DECRYPT_MODE, pk);
@@ -172,7 +172,7 @@ public class KeyReader {
     /**
      * Reads PEM files and returns PEM object.
      * @param path Location of PEM file.
-     * @return java.lang.Object
+     * @return PEM java.lang.Object from PEM file.
      * @throws IOException
      */
     private Object readPemFile(String path) throws IOException {
