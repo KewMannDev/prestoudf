@@ -5,6 +5,12 @@ import com.amazonaws.encryptionsdk.CryptoResult;
 import com.amazonaws.encryptionsdk.kms.KmsMasterKey;
 import com.amazonaws.encryptionsdk.kms.KmsMasterKeyProvider;
 import com.amazonaws.regions.DefaultAwsRegionProviderChain;
+import com.prestoudf.crypto.AesDecrypt;
+import com.prestoudf.crypto.AesEncrypt;
+import com.prestoudf.global.Config;
+import com.prestoudf.key.KeyGenerator;
+import com.prestoudf.key.KeyReader;
+import com.prestoudf.key.KeyWriter;
 import io.prestosql.spi.connector.ConnectorSession;
 import io.prestosql.spi.function.Description;
 import io.prestosql.spi.function.ScalarFunction;
@@ -14,6 +20,16 @@ import io.prestosql.spi.type.StandardTypes;
 import io.airlift.slice.Slice;
 import org.jasypt.util.text.BasicTextEncryptor;
 
+import javax.crypto.BadPaddingException;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
+import javax.crypto.SecretKey;
+import java.io.File;
+import java.io.IOException;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
+import java.security.PrivateKey;
+import java.security.PublicKey;
 import java.util.Base64;
 
 import static io.airlift.slice.Slices.utf8Slice;
@@ -22,7 +38,48 @@ public class SecretFunctions {
 
     private static final String secret = "cipher";
 
+    private static PrivateKey privateKey;
+    private static PublicKey publicKey;
+    private static SecretKey aesKey;
+
     private SecretFunctions(){
+        KeyWriter writer = new KeyWriter();
+        KeyReader reader = new KeyReader();
+        File privateKeyFileChecker = new File(Config.PRIVATEKEY_PATH);
+        File publicKeyFileChecker = new File(Config.PUBLICKEY_PATH);
+        File aesKeyFileChecker = new File(Config.AESKEY_PATH);
+
+        if(privateKeyFileChecker.exists() && publicKeyFileChecker.exists() && aesKeyFileChecker.exists()) {
+            try {
+                privateKey = reader.getPrivateKey();
+                publicKey = reader.getPublicKey();
+                aesKey = reader.getAesKey(privateKey);
+            }
+            catch (IOException | NoSuchPaddingException | NoSuchAlgorithmException | InvalidKeyException e) {
+                e.printStackTrace();
+            }
+        }
+        else {
+            KeyGenerator keygen = KeyGenerator.keyCreator();
+            keygen.setPrivateKeyPEMStr();
+            keygen.setPublicKeyPEMStr();
+            writer.savePrivateKeyPem(keygen.getPrivateKeyPEMStr());
+            writer.savePubliceKeyPem(keygen.getPublicKeyPEMStr());
+
+            try {
+                privateKey = reader.getPrivateKey();
+                publicKey = reader.getPublicKey();
+                writer.saveAESKey(keygen.getAesKey(), publicKey);
+                aesKey = reader.getAesKey(privateKey);
+            }
+            catch (IOException | NoSuchPaddingException | NoSuchAlgorithmException | InvalidKeyException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public static void setKeys() {
+        SecretFunctions ret = new SecretFunctions();
     }
 
     @Description("Encrypts a string using cipher")
@@ -35,6 +92,20 @@ public class SecretFunctions {
 
     }
 
+    @Description("Encrypts a string using AES")
+    @ScalarFunction("encryptAES")
+    @SqlType(StandardTypes.VARCHAR)
+    public static Slice encryptStringAES(@SqlType(StandardTypes.VARCHAR) Slice privateData) {
+        AesEncrypt encrypt = null;
+        try {
+            encrypt = new AesEncrypt(privateData.toStringUtf8(), aesKey);
+        } catch (NoSuchPaddingException | NoSuchAlgorithmException | InvalidKeyException | BadPaddingException | IllegalBlockSizeException e) {
+            e.printStackTrace();
+        }
+        assert encrypt != null;
+        return utf8Slice(encrypt.getEncryptedStr());
+    }
+
     @Description("Decrypts a string using cipher")
     @ScalarFunction("decrypt")
     @SqlType(StandardTypes.VARCHAR)
@@ -43,6 +114,20 @@ public class SecretFunctions {
         basicTextEncryptor.setPasswordCharArray(secret.toCharArray());
        return utf8Slice(basicTextEncryptor.decrypt(secureData.toStringUtf8()));
 
+    }
+
+    @Description("Decrypts a string using AES")
+    @ScalarFunction("decryptAES")
+    @SqlType(StandardTypes.VARCHAR)
+    public static Slice decryptStringAES(@SqlType(StandardTypes.VARCHAR) Slice secureData) {
+        AesDecrypt decrypt = null;
+        try {
+            decrypt = new AesDecrypt(secureData.toStringUtf8(), aesKey);
+        } catch (NoSuchPaddingException | NoSuchAlgorithmException | InvalidKeyException | BadPaddingException | IllegalBlockSizeException e) {
+            e.printStackTrace();
+        }
+        assert decrypt != null;
+        return utf8Slice(decrypt.getDecryptedStr());
     }
 
     @Description("Decrypts a string using cipher and checks for user access")

@@ -19,8 +19,8 @@ ext {
     awsSdkKmsVersion = '1.11.507'
     awsSdkVersion = '1.3.1'
     jasyptVersion = '1.9.2'
-    bcproviderVersion = '1.67'
-    bcpkixVersion = '1.67'
+    bcproviderVersion = '1.54'
+    bcpkixVersion = '1.54'
 }
 
 

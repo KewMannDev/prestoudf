@@ -32,7 +32,7 @@ public class Config {
     final static public String BC_PROVIDER = "BC";
     final static public String ISO_8859_1 = "ISO-8859-1";
 
-    final static public String PRIVATEKEY_PATH = "C:\\Users\\User\\IdeaProjects\\prestoudf\\privatekey.pem";
-    final static public String PUBLICKEY_PATH = "C:\\Users\\User\\IdeaProjects\\prestoudf\\publickey.pem";
-    final static public String AESKEY_PATH = "C:\\Users\\User\\IdeaProjects\\prestoudf\\aeskey";
+    final static public String PRIVATEKEY_PATH = "/opt/presto-server-348/plugin/udfs/keys/privatekey.pem";
+    final static public String PUBLICKEY_PATH = "/opt/presto-server-348/plugin/udfs/keys/publickey.pem";
+    final static public String AESKEY_PATH = "/opt/presto-server-348/plugin/udfs/keys/aeskey";
 }
