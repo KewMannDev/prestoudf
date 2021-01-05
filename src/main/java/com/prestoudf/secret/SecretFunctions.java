@@ -26,6 +26,7 @@ import javax.crypto.NoSuchPaddingException;
 import javax.crypto.SecretKey;
 import java.io.File;
 import java.io.IOException;
+import java.nio.ByteBuffer;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
@@ -33,6 +34,7 @@ import java.security.PublicKey;
 import java.util.Base64;
 
 import static io.airlift.slice.Slices.utf8Slice;
+import static io.airlift.slice.Slices.wrappedBuffer;
 
 public class SecretFunctions {
 
@@ -79,7 +81,7 @@ public class SecretFunctions {
     }
 
     public static void setKeys() {
-        SecretFunctions ret = new SecretFunctions();
+        new SecretFunctions();
     }
 
     @Description("Encrypts a string using cipher")
@@ -99,11 +101,20 @@ public class SecretFunctions {
         AesEncrypt encrypt = null;
         try {
             encrypt = new AesEncrypt(privateData.toStringUtf8(), aesKey);
-        } catch (NoSuchPaddingException | NoSuchAlgorithmException | InvalidKeyException | BadPaddingException | IllegalBlockSizeException e) {
+        }
+        catch (NoSuchPaddingException | NoSuchAlgorithmException | InvalidKeyException | BadPaddingException | IllegalBlockSizeException e) {
             e.printStackTrace();
         }
         assert encrypt != null;
         return utf8Slice(encrypt.getEncryptedStr());
+    }
+
+    @Description("Encrypts a binary using AES")
+    @ScalarFunction("encryptAES")
+    @SqlType(StandardTypes.VARCHAR)
+    public static Slice encryptBinaryAES(@SqlType(StandardTypes.VARBINARY) Slice privateData) {
+        AesEncrypt encrypt = new AesEncrypt(privateData.toByteBuffer(), aesKey);
+        return wrappedBuffer(encrypt.getEncryptedByteBuffer());
     }
 
     @Description("Decrypts a string using cipher")
@@ -128,6 +139,16 @@ public class SecretFunctions {
         }
         assert decrypt != null;
         return utf8Slice(decrypt.getDecryptedStr());
+    }
+
+    @Description("Decrypts a binary using AES")
+    @ScalarFunction("decryptBinaryAES")
+    @SqlType(StandardTypes.VARBINARY)
+    public static Slice decryptBinaryAES(@SqlType(StandardTypes.VARCHAR) Slice secureData) {
+        Base64.Decoder decoder = Base64.getDecoder();
+        ByteBuffer data = ByteBuffer.wrap(decoder.decode(secureData.toStringUtf8()));
+        AesDecrypt decrypt = new AesDecrypt(data, aesKey);
+        return wrappedBuffer(decrypt.getDecryptedByteBuffer());
     }
 
     @Description("Decrypts a string using cipher and checks for user access")
@@ -157,6 +178,4 @@ public class SecretFunctions {
         final CryptoResult<String, KmsMasterKey> decryptResult  = crypto.decryptString(provider,data);
         return utf8Slice((decryptResult.getResult()));
     }
-
-
 }

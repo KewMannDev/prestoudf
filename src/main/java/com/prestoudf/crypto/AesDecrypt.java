@@ -55,8 +55,8 @@ public class AesDecrypt {
     }
 
     /**
-     * Constructor for AesDecrypt class. Decrypts given AES encrypted String.
-     * @param payload AES encrypted String to decrypt.
+     * Constructor for AesDecrypt class. Decrypts given ByteBuffer.
+     * @param payload AES encrypted ByteBuffer to decrypt.
      * @param aesKey AES key to use for decryption.
      * @throws NoSuchPaddingException
      * @throws NoSuchAlgorithmException
@@ -76,6 +76,7 @@ public class AesDecrypt {
             ByteBuffer decrypted = ByteBuffer.allocate(cipher.getOutputSize(payload.remaining()));
             cipher.doFinal(payload, decrypted);
             decrypted.rewind();
+
             this.decryptedByteBuffer = decrypted;
         }
         catch ( Exception e ) {

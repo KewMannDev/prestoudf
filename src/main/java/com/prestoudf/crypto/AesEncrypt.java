@@ -56,8 +56,8 @@ public class AesEncrypt {
     }
 
     /**
-     * Constructor for AesEncrypt class. Encrypts given String with AES.
-     * @param payload String to be encrypted.
+     * Constructor for AesEncrypt class. Encrypts given ByteBuffer with AES.
+     * @param payload ByteBuffer to be encrypted.
      * @param aesKey AES key to use for encryption.
      * @throws NoSuchPaddingException
      * @throws NoSuchAlgorithmException
