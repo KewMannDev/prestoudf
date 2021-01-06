@@ -70,19 +70,20 @@ public class AesEncrypt {
         if ( payload == null || !payload.hasRemaining() ) {
             this.encryptedByteBuffer = payload;
         }
-        try {
-            Cipher cipher = Cipher.getInstance(Config.AES_ALGORITHM);
-            cipher.init(Cipher.ENCRYPT_MODE, aesKey);
-            ByteBuffer encrypted = ByteBuffer.allocate(cipher.getOutputSize(payload.remaining()));
-            cipher.doFinal(payload, encrypted);
-            encrypted.rewind();
+        else {
+            try {
+                Cipher cipher = Cipher.getInstance(Config.AES_ALGORITHM);
+                cipher.init(Cipher.ENCRYPT_MODE, aesKey);
+                ByteBuffer encrypted = ByteBuffer.allocate(cipher.getOutputSize(payload.remaining()));
+                cipher.doFinal(payload, encrypted);
+                encrypted.rewind();
 
-            // encode base64
-            Encoder encoder = Base64.getEncoder();
-            this.encryptedByteBuffer = encoder.encode(encrypted);
-        }
-        catch ( Exception e ) {
-            throw new IllegalStateException( e );
+                // encode base64
+                Encoder encoder = Base64.getEncoder();
+                this.encryptedByteBuffer = encoder.encode(encrypted);
+            } catch (Exception e) {
+                throw new IllegalStateException(e);
+            }
         }
     }
 

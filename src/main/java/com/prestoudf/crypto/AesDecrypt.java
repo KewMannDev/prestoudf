@@ -69,18 +69,19 @@ public class AesDecrypt {
         if ( payload == null || !payload.hasRemaining() ) {
             this.decryptedByteBuffer = payload;
         }
-        try {
-            Cipher cipher = Cipher.getInstance(Config.AES_ALGORITHM);
-            cipher.init(Cipher.DECRYPT_MODE, aesKey);
+        else {
+            try {
+                Cipher cipher = Cipher.getInstance(Config.AES_ALGORITHM);
+                cipher.init(Cipher.DECRYPT_MODE, aesKey);
 
-            ByteBuffer decrypted = ByteBuffer.allocate(cipher.getOutputSize(payload.remaining()));
-            cipher.doFinal(payload, decrypted);
-            decrypted.rewind();
+                ByteBuffer decrypted = ByteBuffer.allocate(cipher.getOutputSize(payload.remaining()));
+                cipher.doFinal(payload, decrypted);
+                decrypted.rewind();
 
-            this.decryptedByteBuffer = decrypted;
-        }
-        catch ( Exception e ) {
-            throw new IllegalStateException( e );
+                this.decryptedByteBuffer = decrypted;
+            } catch (Exception e) {
+                throw new IllegalStateException(e);
+            }
         }
     }
 
