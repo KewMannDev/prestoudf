@@ -79,8 +79,6 @@ public class KeyReader {
                     pemkp = (PEMKeyPair)pemobj;
                 }
                 result = new JcaPEMKeyConverter().setProvider(Config.BC_PROVIDER).getKeyPair(pemkp);
-                System.out.println(result.getPrivate());
-                System.out.println(result.getPublic());
             }
         }
         catch (IOException e) {
