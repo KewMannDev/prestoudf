@@ -38,28 +38,6 @@ public class AesEncrypt {
     private ByteBuffer encryptedByteBuffer;
 
     /**
-     * Constructor for AesEncrypt class. Encrypts given String with AES.
-     * @param payload String to be encrypted.
-     * @param aesKey AES key to use for encryption.
-     * @throws NoSuchPaddingException
-     * @throws NoSuchAlgorithmException
-     * @throws InvalidKeyException
-     * @throws BadPaddingException
-     * @throws IllegalBlockSizeException
-     * @author Wong Kok-Lim
-     */
-    public AesEncrypt(String payload, SecretKey aesKey, String initVector) throws NoSuchPaddingException, NoSuchAlgorithmException, InvalidKeyException, BadPaddingException, IllegalBlockSizeException, InvalidAlgorithmParameterException {
-        IvParameterSpec iv = new IvParameterSpec(initVector.getBytes(StandardCharsets.UTF_8));
-
-        Cipher cipher = Cipher.getInstance(Config.AES_TRANSFORM);
-        cipher.init(Cipher.ENCRYPT_MODE, aesKey, iv);
-        byte[] data = cipher.doFinal(payload.getBytes());
-
-        // encode base64
-        this.encryptedStr = Encoder.encode(data).replaceAll("\n", "").replaceAll("\r", "");
-    }
-
-    /**
      * Constructor for AesEncrypt class. Encrypts given String with AES CBC.
      * @param payload String to be encrypted.
      * @param key String key to use for encryption.
@@ -81,35 +59,6 @@ public class AesEncrypt {
 
         // encode base64
         this.encryptedStr = Encoder.encode(data).replaceAll("\n", "").replaceAll("\r", "");
-    }
-
-    /**
-     * Constructor for AesEncrypt class. Encrypts given ByteBuffer with AES.
-     * @param payload ByteBuffer to be encrypted.
-     * @param aesKey AES key to use for encryption.
-     * @author Wong Kok-Lim
-     */
-    public AesEncrypt(ByteBuffer payload, SecretKey aesKey, String initVector) {
-        IvParameterSpec iv = new IvParameterSpec(initVector.getBytes(StandardCharsets.UTF_8));
-
-        if ( payload == null || !payload.hasRemaining() ) {
-            this.encryptedByteBuffer = payload;
-        }
-        else {
-            try {
-                Cipher cipher = Cipher.getInstance(Config.AES_TRANSFORM);
-                cipher.init(Cipher.ENCRYPT_MODE, aesKey, iv);
-                ByteBuffer encrypted = ByteBuffer.allocate(cipher.getOutputSize(payload.remaining()));
-                cipher.doFinal(payload, encrypted);
-                encrypted.rewind();
-
-                // encode base64
-                this.encryptedByteBuffer = Encoder.encode(encrypted);
-            }
-            catch (Exception e) {
-                throw new IllegalStateException(e);
-            }
-        }
     }
 
     /**
