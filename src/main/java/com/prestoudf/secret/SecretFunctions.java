@@ -104,6 +104,8 @@ public class SecretFunctions {
     /**
      * PrestoSQL user defined function for AES encryption of Strings.
      * @param privateData String to be encrypted with AES.
+     * @param key Key String to use for encryption.
+     * @param iv Initializer Vector to use for encryption
      * @return AES Encrypted String.
      * @author Wong Kok-Lim
      */
@@ -123,8 +125,32 @@ public class SecretFunctions {
     }
 
     /**
+     * PrestoSQL user defined function for AES encryption of Strings.
+     * @param privateData String to be encrypted with AES.
+     * @param iv Initializer Vector to use for encryption
+     * @return AES Encrypted String.
+     * @author Wong Kok-Lim
+     */
+    @Description("Encrypts a string using AES")
+    @ScalarFunction("encryptAES")
+    @SqlType(StandardTypes.VARCHAR)
+    public static Slice encryptStringAES(@SqlType(StandardTypes.VARCHAR) Slice privateData, @SqlType(StandardTypes.VARCHAR) Slice iv) {
+        AesEncrypt encrypt = null;
+        try {
+            encrypt = new AesEncrypt(privateData.toStringUtf8(), aesKey, iv.toStringUtf8());
+        }
+        catch (NoSuchPaddingException | NoSuchAlgorithmException | InvalidKeyException | BadPaddingException | IllegalBlockSizeException | InvalidAlgorithmParameterException e) {
+            e.printStackTrace();
+        }
+        assert encrypt != null;
+        return utf8Slice(encrypt.getEncryptedStr());
+    }
+
+    /**
      * PrestoSQL user defined function for AES encryption of Binary Data.
      * @param privateData Binary data to be encrypted with AES.
+     * @param key Key String to use for encryption.
+     * @param iv Initializer Vector to use for encryption.
      * @return AES encrypted String.
      * @author Wong Kok-Lim
      */
@@ -133,6 +159,21 @@ public class SecretFunctions {
     @SqlType(StandardTypes.VARCHAR)
     public static Slice encryptBinaryAES(@SqlType(StandardTypes.VARBINARY) Slice privateData, @SqlType(StandardTypes.VARCHAR) Slice key, @SqlType(StandardTypes.VARCHAR) Slice iv) {
         AesEncrypt encrypt = new AesEncrypt(privateData.toByteBuffer(), key.toStringUtf8(), iv.toStringUtf8());
+        return wrappedBuffer(encrypt.getEncryptedByteBuffer());
+    }
+
+    /**
+     * PrestoSQL user defined function for AES encryption of Binary Data.
+     * @param privateData Binary data to be encrypted with AES.
+     * @param iv Initializer Vector to use for encryption.
+     * @return AES encrypted String.
+     * @author Wong Kok-Lim
+     */
+    @Description("Encrypts a binary using AES")
+    @ScalarFunction("encryptAES")
+    @SqlType(StandardTypes.VARCHAR)
+    public static Slice encryptBinaryAES(@SqlType(StandardTypes.VARBINARY) Slice privateData, @SqlType(StandardTypes.VARCHAR) Slice iv) {
+        AesEncrypt encrypt = new AesEncrypt(privateData.toByteBuffer(), aesKey, iv.toStringUtf8());
         return wrappedBuffer(encrypt.getEncryptedByteBuffer());
     }
 
@@ -149,6 +190,8 @@ public class SecretFunctions {
     /**
      * PrestoSQL user defined function for AES decryption of AES encrypted String.
      * @param secureData AES encrypted String to be decrypted.
+     * @param key Key String to use for decryption.
+     * @param iv Initializer Vector to use for decryption.
      * @return AES decrypted String.
      * @author Wong Kok-Lim
      */
@@ -167,8 +210,31 @@ public class SecretFunctions {
     }
 
     /**
+     * PrestoSQL user defined function for AES decryption of AES encrypted String.
+     * @param secureData AES encrypted String to be decrypted.
+     * @param iv Initializer Vector to use for decryption.
+     * @return AES decrypted String.
+     * @author Wong Kok-Lim
+     */
+    @Description("Decrypts a string using AES")
+    @ScalarFunction("decryptAES")
+    @SqlType(StandardTypes.VARCHAR)
+    public static Slice decryptStringAES(@SqlType(StandardTypes.VARCHAR) Slice secureData, @SqlType(StandardTypes.VARCHAR) Slice iv) {
+        AesDecrypt decrypt = null;
+        try {
+            decrypt = new AesDecrypt(secureData.toStringUtf8(), aesKey, iv.toStringUtf8());
+        } catch (NoSuchPaddingException | NoSuchAlgorithmException | InvalidKeyException | BadPaddingException | IllegalBlockSizeException | InvalidAlgorithmParameterException e) {
+            e.printStackTrace();
+        }
+        assert decrypt != null;
+        return utf8Slice(decrypt.getDecryptedStr());
+    }
+
+    /**
      * PrestoSQL user defined function for AES decryption of AES encrypted Binary data type.
-     * @param secureData AES encrypted String to be decrypted
+     * @param secureData AES encrypted String to be decrypted.
+     * @param key Key String to use for decryption.
+     * @param iv Initializer Vector to use for decryption.
      * @return Decrypted binary value.
      * @author Wong Kok-Lim
      */
@@ -178,6 +244,22 @@ public class SecretFunctions {
     public static Slice decryptBinaryAES(@SqlType(StandardTypes.VARCHAR) Slice secureData, @SqlType(StandardTypes.VARCHAR) Slice key, @SqlType(StandardTypes.VARCHAR) Slice iv) {
         ByteBuffer data = ByteBuffer.wrap(Decoder.decode(secureData.toStringUtf8()));
         AesDecrypt decrypt = new AesDecrypt(data, key.toStringUtf8(), iv.toStringUtf8());
+        return wrappedBuffer(decrypt.getDecryptedByteBuffer());
+    }
+
+    /**
+     * PrestoSQL user defined function for AES decryption of AES encrypted Binary data type.
+     * @param secureData AES encrypted String to be decrypted.
+     * @param iv Initializer Vector to use for decryption.
+     * @return Decrypted binary value.
+     * @author Wong Kok-Lim
+     */
+    @Description("Decrypts a binary using AES")
+    @ScalarFunction("decryptBinaryAES")
+    @SqlType(StandardTypes.VARBINARY)
+    public static Slice decryptBinaryAES(@SqlType(StandardTypes.VARCHAR) Slice secureData, @SqlType(StandardTypes.VARCHAR) Slice iv) {
+        ByteBuffer data = ByteBuffer.wrap(Decoder.decode(secureData.toStringUtf8()));
+        AesDecrypt decrypt = new AesDecrypt(data, aesKey, iv.toStringUtf8());
         return wrappedBuffer(decrypt.getDecryptedByteBuffer());
     }
 

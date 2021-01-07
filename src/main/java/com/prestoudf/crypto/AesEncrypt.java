@@ -48,9 +48,11 @@ public class AesEncrypt {
      * @throws IllegalBlockSizeException
      * @author Wong Kok-Lim
      */
-    public AesEncrypt(String payload, SecretKey aesKey) throws NoSuchPaddingException, NoSuchAlgorithmException, InvalidKeyException, BadPaddingException, IllegalBlockSizeException {
-        Cipher cipher = Cipher.getInstance(Config.AES_ALGORITHM);
-        cipher.init(Cipher.ENCRYPT_MODE, aesKey);
+    public AesEncrypt(String payload, SecretKey aesKey, String initVector) throws NoSuchPaddingException, NoSuchAlgorithmException, InvalidKeyException, BadPaddingException, IllegalBlockSizeException, InvalidAlgorithmParameterException {
+        IvParameterSpec iv = new IvParameterSpec(initVector.getBytes(StandardCharsets.UTF_8));
+
+        Cipher cipher = Cipher.getInstance(Config.AES_TRANSFORM);
+        cipher.init(Cipher.ENCRYPT_MODE, aesKey, iv);
         byte[] data = cipher.doFinal(payload.getBytes());
 
         // encode base64
@@ -87,14 +89,16 @@ public class AesEncrypt {
      * @param aesKey AES key to use for encryption.
      * @author Wong Kok-Lim
      */
-    public AesEncrypt(ByteBuffer payload, SecretKey aesKey) {
+    public AesEncrypt(ByteBuffer payload, SecretKey aesKey, String initVector) {
+        IvParameterSpec iv = new IvParameterSpec(initVector.getBytes(StandardCharsets.UTF_8));
+
         if ( payload == null || !payload.hasRemaining() ) {
             this.encryptedByteBuffer = payload;
         }
         else {
             try {
-                Cipher cipher = Cipher.getInstance(Config.AES_ALGORITHM);
-                cipher.init(Cipher.ENCRYPT_MODE, aesKey);
+                Cipher cipher = Cipher.getInstance(Config.AES_TRANSFORM);
+                cipher.init(Cipher.ENCRYPT_MODE, aesKey, iv);
                 ByteBuffer encrypted = ByteBuffer.allocate(cipher.getOutputSize(payload.remaining()));
                 cipher.doFinal(payload, encrypted);
                 encrypted.rewind();

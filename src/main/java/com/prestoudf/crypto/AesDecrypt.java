@@ -48,11 +48,13 @@ public class AesDecrypt {
      * @throws IllegalBlockSizeException
      * @author Wong Kok-Lim
      */
-    public AesDecrypt(String payload, SecretKey aesKey) throws NoSuchPaddingException, NoSuchAlgorithmException, InvalidKeyException, BadPaddingException, IllegalBlockSizeException {
+    public AesDecrypt(String payload, SecretKey aesKey, String initVector) throws NoSuchPaddingException, NoSuchAlgorithmException, InvalidKeyException, BadPaddingException, IllegalBlockSizeException, InvalidAlgorithmParameterException {
+        IvParameterSpec iv = new IvParameterSpec(initVector.getBytes(StandardCharsets.UTF_8));
+
         byte[] data = Decoder.decode(payload);
 
-        Cipher cipher = Cipher.getInstance(Config.AES_ALGORITHM);
-        cipher.init(Cipher.DECRYPT_MODE, aesKey);
+        Cipher cipher = Cipher.getInstance(Config.AES_TRANSFORM);
+        cipher.init(Cipher.DECRYPT_MODE, aesKey, iv);
         this.decryptedStr = new String(cipher.doFinal(data));
     }
 
@@ -85,14 +87,16 @@ public class AesDecrypt {
      * @param aesKey AES key to use for decryption.
      * @author Wong Kok-Lim
      */
-    public AesDecrypt(ByteBuffer payload, SecretKey aesKey) {
+    public AesDecrypt(ByteBuffer payload, SecretKey aesKey, String initVector) {
+        IvParameterSpec iv = new IvParameterSpec(initVector.getBytes(StandardCharsets.UTF_8));
+
         if ( payload == null || !payload.hasRemaining() ) {
             this.decryptedByteBuffer = payload;
         }
         else {
             try {
-                Cipher cipher = Cipher.getInstance(Config.AES_ALGORITHM);
-                cipher.init(Cipher.DECRYPT_MODE, aesKey);
+                Cipher cipher = Cipher.getInstance(Config.AES_TRANSFORM);
+                cipher.init(Cipher.DECRYPT_MODE, aesKey, iv);
 
                 ByteBuffer decrypted = ByteBuffer.allocate(cipher.getOutputSize(payload.remaining()));
                 cipher.doFinal(payload, decrypted);
@@ -115,6 +119,7 @@ public class AesDecrypt {
      */
     public AesDecrypt(ByteBuffer payload, String key, String initVector) {
         IvParameterSpec iv = new IvParameterSpec(initVector.getBytes(StandardCharsets.UTF_8));
+
         SecretKeySpec skeySpec = KeyGenerator.aesKeySpecGenerator(key);
 
         if ( payload == null || !payload.hasRemaining() ) {
