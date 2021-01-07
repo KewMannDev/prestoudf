@@ -7,6 +7,7 @@ import com.amazonaws.encryptionsdk.kms.KmsMasterKeyProvider;
 import com.amazonaws.regions.DefaultAwsRegionProviderChain;
 import com.prestoudf.crypto.AesDecrypt;
 import com.prestoudf.crypto.AesEncrypt;
+import com.prestoudf.crypto.Decoder;
 import com.prestoudf.global.Config;
 import com.prestoudf.key.KeyGenerator;
 import com.prestoudf.key.KeyReader;
@@ -27,10 +28,7 @@ import javax.crypto.SecretKey;
 import java.io.File;
 import java.io.IOException;
 import java.nio.ByteBuffer;
-import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
-import java.security.PrivateKey;
-import java.security.PublicKey;
+import java.security.*;
 import java.util.Base64;
 
 import static io.airlift.slice.Slices.utf8Slice;
@@ -112,12 +110,12 @@ public class SecretFunctions {
     @Description("Encrypts a string using AES")
     @ScalarFunction("encryptAES")
     @SqlType(StandardTypes.VARCHAR)
-    public static Slice encryptStringAES(@SqlType(StandardTypes.VARCHAR) Slice privateData) {
+    public static Slice encryptStringAES(@SqlType(StandardTypes.VARCHAR) Slice privateData, @SqlType(StandardTypes.VARCHAR) Slice key, @SqlType(StandardTypes.VARCHAR) Slice iv) {
         AesEncrypt encrypt = null;
         try {
-            encrypt = new AesEncrypt(privateData.toStringUtf8(), aesKey);
+            encrypt = new AesEncrypt(privateData.toStringUtf8(), key.toStringUtf8(), iv.toStringUtf8());
         }
-        catch (NoSuchPaddingException | NoSuchAlgorithmException | InvalidKeyException | BadPaddingException | IllegalBlockSizeException e) {
+        catch (NoSuchPaddingException | NoSuchAlgorithmException | InvalidKeyException | BadPaddingException | IllegalBlockSizeException | InvalidAlgorithmParameterException e) {
             e.printStackTrace();
         }
         assert encrypt != null;
@@ -133,8 +131,8 @@ public class SecretFunctions {
     @Description("Encrypts a binary using AES")
     @ScalarFunction("encryptAES")
     @SqlType(StandardTypes.VARCHAR)
-    public static Slice encryptBinaryAES(@SqlType(StandardTypes.VARBINARY) Slice privateData) {
-        AesEncrypt encrypt = new AesEncrypt(privateData.toByteBuffer(), aesKey);
+    public static Slice encryptBinaryAES(@SqlType(StandardTypes.VARBINARY) Slice privateData, @SqlType(StandardTypes.VARCHAR) Slice key, @SqlType(StandardTypes.VARCHAR) Slice iv) {
+        AesEncrypt encrypt = new AesEncrypt(privateData.toByteBuffer(), key.toStringUtf8(), iv.toStringUtf8());
         return wrappedBuffer(encrypt.getEncryptedByteBuffer());
     }
 
@@ -157,11 +155,11 @@ public class SecretFunctions {
     @Description("Decrypts a string using AES")
     @ScalarFunction("decryptAES")
     @SqlType(StandardTypes.VARCHAR)
-    public static Slice decryptStringAES(@SqlType(StandardTypes.VARCHAR) Slice secureData) {
+    public static Slice decryptStringAES(@SqlType(StandardTypes.VARCHAR) Slice secureData, @SqlType(StandardTypes.VARCHAR) Slice key, @SqlType(StandardTypes.VARCHAR) Slice iv) {
         AesDecrypt decrypt = null;
         try {
-            decrypt = new AesDecrypt(secureData.toStringUtf8(), aesKey);
-        } catch (NoSuchPaddingException | NoSuchAlgorithmException | InvalidKeyException | BadPaddingException | IllegalBlockSizeException e) {
+            decrypt = new AesDecrypt(secureData.toStringUtf8(), key.toStringUtf8(), iv.toStringUtf8());
+        } catch (NoSuchPaddingException | NoSuchAlgorithmException | InvalidKeyException | BadPaddingException | IllegalBlockSizeException | InvalidAlgorithmParameterException e) {
             e.printStackTrace();
         }
         assert decrypt != null;
@@ -177,10 +175,9 @@ public class SecretFunctions {
     @Description("Decrypts a binary using AES")
     @ScalarFunction("decryptBinaryAES")
     @SqlType(StandardTypes.VARBINARY)
-    public static Slice decryptBinaryAES(@SqlType(StandardTypes.VARCHAR) Slice secureData) {
-        Base64.Decoder decoder = Base64.getDecoder();
-        ByteBuffer data = ByteBuffer.wrap(decoder.decode(secureData.toStringUtf8()));
-        AesDecrypt decrypt = new AesDecrypt(data, aesKey);
+    public static Slice decryptBinaryAES(@SqlType(StandardTypes.VARCHAR) Slice secureData, @SqlType(StandardTypes.VARCHAR) Slice key, @SqlType(StandardTypes.VARCHAR) Slice iv) {
+        ByteBuffer data = ByteBuffer.wrap(Decoder.decode(secureData.toStringUtf8()));
+        AesDecrypt decrypt = new AesDecrypt(data, key.toStringUtf8(), iv.toStringUtf8());
         return wrappedBuffer(decrypt.getDecryptedByteBuffer());
     }
 

@@ -18,6 +18,7 @@ import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 import java.io.*;
 import java.math.BigInteger;
+import java.nio.charset.StandardCharsets;
 import java.security.*;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.RSAPrivateCrtKeySpec;
@@ -114,6 +115,16 @@ public class KeyGenerator {
     }
 
     /**
+     * Generates SecretKeySpec from a key String.
+     * @param key Key String to be used in SecretKeySpec generation.
+     * @return SecretKeySpec base on provided key String.
+     * @author Wong Kok-Lim
+     */
+    public static SecretKeySpec aesKeySpecGenerator(String key) {
+        return new SecretKeySpec(key.getBytes(StandardCharsets.UTF_8), Config.AES_ALGORITHM);
+    }
+
+    /**
      * Converts java.security.PrivateKey to String in encrypted PEM format.
      * @throws OperatorCreationException
      * @throws IOException
@@ -130,7 +141,6 @@ public class KeyGenerator {
     /**
      * Converts java.security.PublicKey to String in PEM format.
      * @throws IOException
-     * @return Encoded String of java.security.PublicKey in PEM format
      * @author Wong Kok-Lim
      */
     private void publicKeyPemStrGenerator() throws IOException {
