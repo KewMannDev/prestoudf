@@ -8,36 +8,16 @@ import java.nio.charset.StandardCharsets;
 /**
  * ==Description==<br/>
  * <p>
- *     Generates java.security.PrivateKey, java.security.PublicKey & javax.crypto.SecretKey (i.e. AES key) objects. <br/>
- *     This class also generates encrypted String of java.security.PrivateKey & java.security.PublicKey in PEM format.
+ *     Generates javax.crypto.SecretKeySpec (i.e. AES key) objects. <br/>
  * </p><br/>
  * ===Objects===<br/>
- * <p>This class contains the following objects when instantiated:</p>
- * <ul>
- *     <li>keyObj</li>
- *     <li>privateKey</li>
- *     <li>publicKey</li>
- *     <li>privateKeyPEMStr</li>
- *     <li>publicKeyPEMStr</li>
- *     <li>aesKey</li>
- *     <li>aesKeySpec</li>
- * </ul>
+ * <p>This class does not contain any objects when instantiated.</p>
+ *
  * ===Methods===<br/>
  * <p>This class contains the following methods when instantiated:</p>
  * <ul>
  *     <li>KeyGenerator()</li>
- *     <li>keyCreator()</li>
- *     <li>privateKeyPemStrGenerator()</li>
- *     <li>publicKeyPemStrGenerator()</li>
- *     <li>pemStrGenerator(PemObject pemObj)</li>
- *     <li>getPrivateKey()</li>
- *     <li>getPublicKey()</li>
- *     <li>getAesKeySpec()</li>
- *     <li>getAesKey()</li>
- *     <li>getPrivateKeyPEMStr()</li>
- *     <li>setPrivateKeyPEMStr()</li>
- *     <li>getPublicKeyPEMStr()</li>
- *     <li>setPublicKeyPEMStr()</li>
+ *     <li>aesKeySpecGenerator(String key)</li>
  * </ul>
  *
  * @author Wong Kok-Lim

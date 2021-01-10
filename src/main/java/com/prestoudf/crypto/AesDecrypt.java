@@ -21,13 +21,16 @@ import java.security.NoSuchAlgorithmException;
  * <p>This class contains the following objects when instantiated:</p>
  * <ul>
  *     <li>decryptedStr</li>
+ *     <li>decryptedByteBuffer</li>
  * </ul>
  *
  * ===Methods===
  * <p>This class contains the following methods when instantiated:</p>
  * <ul>
- *     <li>AesDecrypt(String payload, SecretKey aesKey)</li>
+ *     <li>AesDecrypt(String payload, String key, String initVector)</li>
+ *     <li>AesDecrypt(ByteBuffer payload, String key, String initVector)</li>
  *     <li>getDecryptedStr()</li>
+ *     <li>getDecryptedByteBuffer()</li>
  * </ul>
  *
  * @author Wong Kok-Lim

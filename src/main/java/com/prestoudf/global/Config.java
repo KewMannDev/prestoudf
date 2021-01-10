@@ -8,15 +8,8 @@ package com.prestoudf.global;
  * ===Objects=== <br/>
  * <p>This class contains the following objects when instantiated:</p>
  * <ul>
- *     <li>AES_KEY_SIZE</li>
- *     <li>PASSPHRASE</li>
  *     <li>AES_ALGORITHM</li>
- *     <li>RSA_ALGORITHM</li>
- *     <li>BC_PROVIDER</li>
- *     <li>ISO_8859_1</li>
- *     <li>PRIVATEKEY_PATH</li>
- *     <li>PUBLICKEY_PATH</li>
- *     <li>AESKEY_PATH</li>
+ *     <li>AESKEY_TRANSFORM</li>
  * </ul>
  * ===Methods===
  * <p>This class does not contains any methods when instantiated.</p>

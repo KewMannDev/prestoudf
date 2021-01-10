@@ -9,6 +9,8 @@ public class SecretPlugin  implements Plugin {
     public Set<Class<?>> getFunctions(){
         return ImmutableSet.<Class<?>>builder()
                 .add(SecretFunctions.class)
+                .add(PrestoEncryptAES.class)
+                .add(PrestoDecryptAES.class)
                 .build();
     }
 }
