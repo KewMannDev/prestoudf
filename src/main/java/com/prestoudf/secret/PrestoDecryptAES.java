@@ -80,4 +80,38 @@ public final class PrestoDecryptAES {
         AesDecrypt decrypt = new AesDecrypt(data, key.toStringUtf8(), iv.toStringUtf8());
         return wrappedBuffer(decrypt.getDecryptedByteBuffer());
     }
+
+    /**
+     * PrestoSQL user defined function for AES CBC decryption of AES CBC encrypted Binary data type.
+     * @param secureData AES CBC encrypted String to be decrypted.
+     * @param key Key String to use for decryption.
+     * @param iv Initializer Vector to use for decryption.
+     * @return Decrypted IPADDRESS value.
+     * @author Wong Kok-Lim
+     */
+    @Description("Decrypts a IP address using AES")
+    @ScalarFunction("decrypt_aes_ip")
+    @SqlType(StandardTypes.IPADDRESS)
+    public static Slice decryptIpAES(@SqlType(StandardTypes.VARCHAR) Slice secureData, @SqlType(StandardTypes.VARCHAR) Slice key, @SqlType(StandardTypes.VARCHAR) Slice iv) {
+        ByteBuffer data = ByteBuffer.wrap(Decoder.decode(secureData.toStringUtf8()));
+        AesDecrypt decrypt = new AesDecrypt(data, key.toStringUtf8(), iv.toStringUtf8());
+        return wrappedBuffer(decrypt.getDecryptedByteBuffer()).slice(0, 16);
+    }
+
+    /**
+     * PrestoSQL user defined function for AES CBC decryption of AES CBC encrypted UUID data type.
+     * @param secureData AES CBC encrypted String to be decrypted.
+     * @param key Key String to use for decryption.
+     * @param iv Initializer Vector to use for decryption.
+     * @return Decrypted UUID value.
+     * @author Wong Kok-Lim
+     */
+    @Description("Decrypts a UUID using AES")
+    @ScalarFunction("decrypt_aes_uuid")
+    @SqlType(StandardTypes.UUID)
+    public static Slice decryptUuidAES(@SqlType(StandardTypes.VARCHAR) Slice secureData, @SqlType(StandardTypes.VARCHAR) Slice key, @SqlType(StandardTypes.VARCHAR) Slice iv) {
+        ByteBuffer data = ByteBuffer.wrap(Decoder.decode(secureData.toStringUtf8()));
+        AesDecrypt decrypt = new AesDecrypt(data, key.toStringUtf8(), iv.toStringUtf8());
+        return wrappedBuffer(decrypt.getDecryptedByteBuffer()).slice(0, 16);
+    }
 }

@@ -8,6 +8,7 @@ import io.prestosql.spi.type.StandardTypes;
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
+import java.nio.ByteBuffer;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
@@ -115,7 +116,7 @@ public final class PrestoEncryptAES {
 
     /**
      * PrestoSQL user defined function for AES encryption of Binary Data.
-     * @param privateData VARCHAR, IPADDRESS, JSON, CHAR, VARBINARY to be encrypted with AES.
+     * @param privateData VARCHAR, IPADDRESS, UUID, JSON, CHAR, VARBINARY to be encrypted with AES.
      * @param key Key String to use for encryption.
      * @param iv Initializer Vector to use for encryption.
      * @return AES encrypted String.
@@ -126,7 +127,7 @@ public final class PrestoEncryptAES {
     @TypeParameter("V")
     @SqlType(StandardTypes.VARCHAR)
     public static Slice encryptBinaryAES(@SqlNullable @SqlType("T") Slice privateData, @SqlNullable @SqlType("U") Slice key, @SqlNullable @SqlType("V") Slice iv) {
-        AesEncrypt encrypt = new AesEncrypt(privateData.toByteBuffer(), key.toStringUtf8(), iv.toStringUtf8());
+        AesEncrypt encrypt = new AesEncrypt(ByteBuffer.wrap(privateData.getBytes()), key.toStringUtf8(), iv.toStringUtf8());
         return wrappedBuffer(encrypt.getEncryptedByteBuffer());
     }
 }
