@@ -36,12 +36,13 @@ import java.security.NoSuchAlgorithmException;
  * @author Wong Kok-Lim
  * @example
  */
-public class AesEncrypt {
-    private String encryptedStr;
-    private ByteBuffer encryptedByteBuffer;
+public class AESEncrypter implements Encrypter {
+
+    public AESEncrypter() {
+    }
 
     /**
-     * Constructor for AesEncrypt class. Encrypts given String with AES CBC.
+     * Encrypts given String with AES CBC.
      * @param payload String to be encrypted.
      * @param key String key to use for encryption.
      * @param initVector Initialize Vector to use for encryption.
@@ -52,7 +53,7 @@ public class AesEncrypt {
      * @throws IllegalBlockSizeException
      * @author Wong Kok-Lim
      */
-    public AesEncrypt(String payload, String key, String initVector) throws NoSuchPaddingException, NoSuchAlgorithmException, InvalidKeyException, BadPaddingException, IllegalBlockSizeException, InvalidAlgorithmParameterException {
+    public String encryptString(String payload, String key, String initVector) throws NoSuchPaddingException, NoSuchAlgorithmException, InvalidKeyException, BadPaddingException, IllegalBlockSizeException, InvalidAlgorithmParameterException {
         IvParameterSpec iv = new IvParameterSpec(initVector.getBytes(StandardCharsets.UTF_8));
         SecretKeySpec skeySpec = KeyGenerator.aesKeySpecGenerator(key);
 
@@ -61,22 +62,22 @@ public class AesEncrypt {
         byte[] data = cipher.doFinal(payload.getBytes());
 
         // encode base64
-        this.encryptedStr = Encoder.encode(data).replaceAll("\n", "").replaceAll("\r", "");
+        return Encoder.encode(data).replaceAll("\n", "").replaceAll("\r", "");
     }
 
     /**
-     * Constructor for AesEncrypt class. Encrypts given ByteBuffer with AES CBC.
+     * Encrypts given ByteBuffer with AES CBC.
      * @param payload ByteBuffer to be encrypted.
      * @param key Key String to use for encryption.
      * @param initVector Initialize Vector to use for encryption
      * @author Wong Kok-Lim
      */
-    public AesEncrypt(ByteBuffer payload, String key, String initVector) {
+    public ByteBuffer encryptByteBuffer(ByteBuffer payload, String key, String initVector) {
         IvParameterSpec iv = new IvParameterSpec(initVector.getBytes(StandardCharsets.UTF_8));
         SecretKeySpec skeySpec = KeyGenerator.aesKeySpecGenerator(key);
 
         if ( payload == null || !payload.hasRemaining() ) {
-            this.encryptedByteBuffer = payload;
+            return payload;
         }
         else {
             try {
@@ -87,29 +88,11 @@ public class AesEncrypt {
                 encrypted.rewind();
 
                 // encode base64
-                this.encryptedByteBuffer = Encoder.encode(encrypted);
+                return Encoder.encode(encrypted);
             }
             catch (Exception e) {
                 throw new IllegalStateException(e);
             }
         }
-    }
-
-    /**
-     * Gets the AES encrypted String.
-     * @return AES Encrypted String.
-     * @author Wong Kok-Lim.
-     */
-    public String getEncryptedStr() {
-        return this.encryptedStr;
-    }
-
-    /**
-     * Gets the AES encrypted ByteBuffer.
-     * @return AES Encrypted ByteBuffer.
-     * @author Wong Kok-Lim.
-     */
-    public ByteBuffer getEncryptedByteBuffer() {
-        return this.encryptedByteBuffer;
     }
 }

@@ -5,7 +5,6 @@ import com.amazonaws.encryptionsdk.CryptoResult;
 import com.amazonaws.encryptionsdk.kms.KmsMasterKey;
 import com.amazonaws.encryptionsdk.kms.KmsMasterKeyProvider;
 import com.amazonaws.regions.DefaultAwsRegionProviderChain;
-import com.prestoudf.crypto.AesEncrypt;
 import io.prestosql.spi.connector.ConnectorSession;
 import io.prestosql.spi.function.*;
 import io.prestosql.spi.security.AccessDeniedException;
@@ -13,14 +12,7 @@ import io.prestosql.spi.type.StandardTypes;
 import io.airlift.slice.Slice;
 import org.jasypt.util.text.BasicTextEncryptor;
 
-import javax.crypto.BadPaddingException;
-import javax.crypto.IllegalBlockSizeException;
-import javax.crypto.NoSuchPaddingException;
-import java.security.InvalidAlgorithmParameterException;
-import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
 import java.util.Base64;
-import java.util.Date;
 
 import static io.airlift.slice.Slices.utf8Slice;
 

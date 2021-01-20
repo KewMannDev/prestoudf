@@ -36,14 +36,14 @@ import java.security.NoSuchAlgorithmException;
  * @author Wong Kok-Lim
  * @example
  */
-public class AesDecrypt {
-    private String decryptedStr;
-    private ByteBuffer decryptedByteBuffer;
+public class AESDecrypter implements Decrypter {
+    public AESDecrypter() {
+    }
 
     /**
-     * Constructor for AesDecrypt class. Decrypts given AES CBC encrypted String.
-     * @param payload AES encrypted String to decrypt.
-     * @param key AES key to use for decryption.
+     * Decrypts given AES CBC encrypted String.
+     * @param payload AES CBC encrypted String to decrypt.
+     * @param key AES CBC key to use for decryption.
      * @param initVector Initialize Vector to use for decryption.
      * @throws NoSuchPaddingException
      * @throws NoSuchAlgorithmException
@@ -52,7 +52,7 @@ public class AesDecrypt {
      * @throws IllegalBlockSizeException
      * @author Wong Kok-Lim
      */
-    public AesDecrypt(String payload, String key, String initVector) throws NoSuchPaddingException, NoSuchAlgorithmException, InvalidKeyException, BadPaddingException, IllegalBlockSizeException, InvalidAlgorithmParameterException {
+    public String decryptString(String payload, String key, String initVector) throws NoSuchPaddingException, NoSuchAlgorithmException, InvalidAlgorithmParameterException, InvalidKeyException, BadPaddingException, IllegalBlockSizeException {
         IvParameterSpec iv = new IvParameterSpec(initVector.getBytes(StandardCharsets.UTF_8));
         SecretKeySpec skeySpec = KeyGenerator.aesKeySpecGenerator(key);
 
@@ -60,25 +60,24 @@ public class AesDecrypt {
 
         Cipher cipher = Cipher.getInstance(Config.AES_TRANSFORM);
         cipher.init(Cipher.DECRYPT_MODE, skeySpec, iv);
-        this.decryptedStr = new String(cipher.doFinal(data));
+        return new String(cipher.doFinal(data));
     }
 
     /**
-     * Constructor for AesDecrypt class. Decrypts given ByteBuffer.
+     * Decrypts AES CBC encrypted ByteBuffer.
      * @param payload AES encrypted ByteBuffer to decrypt.
      * @param key Key String to use for decryption.
      * @param initVector Initialize Vector to use for decryption.
      * @author Wong Kok-Lim
      */
-    public AesDecrypt(ByteBuffer payload, String key, String initVector) {
+    public ByteBuffer decryptByteBuffer(ByteBuffer payload, String key, String initVector) {
         IvParameterSpec iv = new IvParameterSpec(initVector.getBytes(StandardCharsets.UTF_8));
 
         SecretKeySpec skeySpec = KeyGenerator.aesKeySpecGenerator(key);
 
-        if ( payload == null || !payload.hasRemaining() ) {
-            this.decryptedByteBuffer = payload;
-        }
-        else {
+        if (payload == null || !payload.hasRemaining()) {
+            return payload;
+        } else {
             try {
                 Cipher cipher = Cipher.getInstance(Config.AES_TRANSFORM);
                 cipher.init(Cipher.DECRYPT_MODE, skeySpec, iv);
@@ -87,29 +86,10 @@ public class AesDecrypt {
                 cipher.doFinal(payload, decrypted);
                 decrypted.rewind();
 
-                this.decryptedByteBuffer = decrypted;
-            }
-            catch (Exception e) {
+                return decrypted;
+            } catch (Exception e) {
                 throw new IllegalStateException(e);
             }
         }
-    }
-
-    /**
-     * Gets the decrypted String.
-     * @return Decrypted String.
-     * @author Wong Kok-Lim
-     */
-    public String getDecryptedStr() {
-        return this.decryptedStr;
-    }
-
-    /**
-     * Gets the AES decrypted ByteBuffer.
-     * @return AES Decrypted ByteBuffer.
-     * @author Wong Kok-Lim.
-     */
-    public ByteBuffer getDecryptedByteBuffer() {
-        return this.decryptedByteBuffer;
     }
 }
