@@ -4,4 +4,3 @@ gradle/
 .DS_Store
 *.iml
 *.pem
-*key*

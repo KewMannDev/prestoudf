@@ -1,8 +1,8 @@
-package com.prestoudf.test;
+package com.trinoudf.test;
 
-import com.prestoudf.crypto.AESDecrypter;
-import com.prestoudf.crypto.AESEncrypter;
-import com.prestoudf.crypto.Decoder;
+import com.trinoudf.crypto.AESCBCDecrypter;
+import com.trinoudf.crypto.AESCBCEncrypter;
+import com.trinoudf.crypto.Decoder;
 import org.junit.Test;
 
 import javax.crypto.BadPaddingException;
@@ -50,9 +50,9 @@ public class UnitTest {
     public void aesCBCEncryptDecryptString() throws NoSuchPaddingException, InvalidAlgorithmParameterException, NoSuchAlgorithmException, IllegalBlockSizeException, BadPaddingException, InvalidKeyException {
         String expected = "hello2";
 
-        String encrypt = new AESEncrypter().encryptString(expected, "aesEncryptionKey", "encryptionIntVec");
+        String encrypt = new AESCBCEncrypter().encryptString(expected, "aesEncryptionKey", "encryptionIntVec");
 
-        String decrypt = new AESDecrypter().decryptString(encrypt, "aesEncryptionKey", "encryptionIntVec");
+        String decrypt = new AESCBCDecrypter().decryptString(encrypt, "aesEncryptionKey", "encryptionIntVec");
         String decryptStr = decrypt;
 
         assertEquals(expected, decryptStr);
@@ -66,10 +66,10 @@ public class UnitTest {
     public void aesCBCEncryptDecryptByteBuffer() {
         String expected = "hello2";
 
-        ByteBuffer encrypt = new AESEncrypter().encryptByteBuffer(ByteBuffer.wrap(expected.getBytes()), "aesEncryptionKey", "encryptionIntVec");
+        ByteBuffer encrypt = new AESCBCEncrypter().encryptByteBuffer(ByteBuffer.wrap(expected.getBytes()), "aesEncryptionKey", "encryptionIntVec");
         String encryptedStr = wrappedBuffer(encrypt).toStringUtf8();
 
-        ByteBuffer decrypt = new AESDecrypter().decryptByteBuffer(ByteBuffer.wrap(Decoder.decode(encryptedStr)), "aesEncryptionKey", "encryptionIntVec");
+        ByteBuffer decrypt = new AESCBCDecrypter().decryptByteBuffer(ByteBuffer.wrap(Decoder.decode(encryptedStr)), "aesEncryptionKey", "encryptionIntVec");
         String decryptStr = wrappedBuffer(decrypt).toStringAscii().trim();
 
         assertEquals(expected, decryptStr);

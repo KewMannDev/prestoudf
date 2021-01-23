@@ -1,6 +1,6 @@
-package com.prestoudf.secret;
+package com.trinoudf.secret;
 
-import io.prestosql.spi.Plugin;
+import io.trino.spi.Plugin;
 import com.google.common.collect.ImmutableSet;
 import java.util.Set;
 

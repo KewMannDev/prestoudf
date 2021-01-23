@@ -2,7 +2,7 @@ plugins {
     id 'java'
 }
 
-group 'com.prestoudf'
+group 'com.trinoudf'
 version '1.0'
 
 sourceCompatibility = 1.8
@@ -10,7 +10,7 @@ targetCompatibility = 1.8
 
 
 ext {
-    prestoVersion = '348'
+    trinoVersion = '351'
     airliftUnitsVersion = '1.3'
     airliftSliceVersion = '0.36'
     guavaVersion = '27.0.1-jre'
@@ -38,11 +38,11 @@ dependencies {
     implementation "org.jasypt:jasypt:$jasyptVersion"
     implementation "org.bouncycastle:bcprov-jdk15on:$bcproviderVersion"
     implementation "org.bouncycastle:bcpkix-jdk15on:$bcpkixVersion"
-    compileOnly "io.prestosql:presto-main:$prestoVersion"
-    compileOnly "io.prestosql:presto-spi:$prestoVersion"
+    compileOnly "io.trino:trino-main:$trinoVersion"
+    compileOnly "io.trino:trino-spi:$trinoVersion"
     compileOnly "io.airlift:slice:$airliftSliceVersion"
     compileOnly "io.airlift:units:$airliftUnitsVersion"
-    testImplementation "io.prestosql:presto-tests:$prestoVersion"
+    testImplementation "io.trino:trino-tests:$trinoVersion"
 }
 
 jar {

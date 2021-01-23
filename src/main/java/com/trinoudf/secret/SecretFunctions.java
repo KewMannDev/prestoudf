@@ -1,14 +1,14 @@
-package com.prestoudf.secret;
+package com.trinoudf.secret;
 
 import com.amazonaws.encryptionsdk.AwsCrypto;
 import com.amazonaws.encryptionsdk.CryptoResult;
 import com.amazonaws.encryptionsdk.kms.KmsMasterKey;
 import com.amazonaws.encryptionsdk.kms.KmsMasterKeyProvider;
 import com.amazonaws.regions.DefaultAwsRegionProviderChain;
-import io.prestosql.spi.connector.ConnectorSession;
-import io.prestosql.spi.function.*;
-import io.prestosql.spi.security.AccessDeniedException;
-import io.prestosql.spi.type.StandardTypes;
+import io.trino.spi.connector.ConnectorSession;
+import io.trino.spi.function.*;
+import io.trino.spi.security.AccessDeniedException;
+import io.trino.spi.type.StandardTypes;
 import io.airlift.slice.Slice;
 import org.jasypt.util.text.BasicTextEncryptor;
 

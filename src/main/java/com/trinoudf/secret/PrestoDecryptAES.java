@@ -1,11 +1,12 @@
-package com.prestoudf.secret;
+package com.trinoudf.secret;
 
-import com.prestoudf.crypto.AESDecrypt;
+import com.trinoudf.crypto.AESDecrypt;
+import com.trinoudf.global.Methods;
 import io.airlift.slice.Slice;
-import io.prestosql.spi.function.Description;
-import io.prestosql.spi.function.ScalarFunction;
-import io.prestosql.spi.function.SqlType;
-import io.prestosql.spi.type.StandardTypes;
+import io.trino.spi.function.Description;
+import io.trino.spi.function.ScalarFunction;
+import io.trino.spi.function.SqlType;
+import io.trino.spi.type.StandardTypes;
 
 /**
  * ==Description==
@@ -26,7 +27,9 @@ import io.prestosql.spi.type.StandardTypes;
  * @author koklim
  * @example
  */
-public final class PrestoDecryptAES extends AESDecrypt {
+public final class PrestoDecryptAES {
+    private static final AESDecrypt aesDecrypt = new AESDecrypt(Methods.CBC);
+
     private PrestoDecryptAES() {
     }
 
@@ -42,7 +45,7 @@ public final class PrestoDecryptAES extends AESDecrypt {
     @ScalarFunction("decrypt_aes")
     @SqlType(StandardTypes.VARCHAR)
     public static Slice decryptStringAes(@SqlType(StandardTypes.VARCHAR) Slice secureData, @SqlType(StandardTypes.VARCHAR) Slice key, @SqlType(StandardTypes.VARCHAR) Slice iv) {
-        return stringAES(secureData.toStringUtf8(), key.toStringUtf8(), iv.toStringUtf8());
+        return aesDecrypt.stringAES(secureData.toStringUtf8(), key.toStringUtf8(), iv.toStringUtf8());
     }
 
     /**
@@ -57,7 +60,7 @@ public final class PrestoDecryptAES extends AESDecrypt {
     @ScalarFunction("decrypt_aes_binary")
     @SqlType(StandardTypes.VARBINARY)
     public static Slice decryptBinaryAes(@SqlType(StandardTypes.VARCHAR) Slice secureData, @SqlType(StandardTypes.VARCHAR) Slice key, @SqlType(StandardTypes.VARCHAR) Slice iv) {
-        return byteBufferAES(secureData.toStringUtf8(), key.toStringUtf8(), iv.toStringUtf8());
+        return aesDecrypt.byteBufferAES(secureData.toStringUtf8(), key.toStringUtf8(), iv.toStringUtf8());
     }
 
     /**
@@ -72,7 +75,7 @@ public final class PrestoDecryptAES extends AESDecrypt {
     @ScalarFunction("decrypt_aes_ip")
     @SqlType(StandardTypes.IPADDRESS)
     public static Slice decryptIpAes(@SqlType(StandardTypes.VARCHAR) Slice secureData, @SqlType(StandardTypes.VARCHAR) Slice key, @SqlType(StandardTypes.VARCHAR) Slice iv) {
-        Slice decrypted = byteBufferAES(secureData.toStringUtf8(), key.toStringUtf8(), iv.toStringUtf8());
+        Slice decrypted = aesDecrypt.byteBufferAES(secureData.toStringUtf8(), key.toStringUtf8(), iv.toStringUtf8());
         return decrypted.slice(0, 16);
     }
 
@@ -88,7 +91,7 @@ public final class PrestoDecryptAES extends AESDecrypt {
     @ScalarFunction("decrypt_aes_uuid")
     @SqlType(StandardTypes.UUID)
     public static Slice decryptUuidAes(@SqlType(StandardTypes.VARCHAR) Slice secureData, @SqlType(StandardTypes.VARCHAR) Slice key, @SqlType(StandardTypes.VARCHAR) Slice iv) {
-        Slice decrypted = byteBufferAES(secureData.toStringUtf8(), key.toStringUtf8(), iv.toStringUtf8());
+        Slice decrypted = aesDecrypt.byteBufferAES(secureData.toStringUtf8(), key.toStringUtf8(), iv.toStringUtf8());
         return decrypted.slice(0, 16);
     }
 }

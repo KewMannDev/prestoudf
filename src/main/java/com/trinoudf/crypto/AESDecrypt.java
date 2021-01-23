@@ -1,5 +1,6 @@
-package com.prestoudf.crypto;
+package com.trinoudf.crypto;
 
+import com.trinoudf.global.Methods;
 import io.airlift.slice.Slice;
 
 import javax.crypto.BadPaddingException;
@@ -31,6 +32,13 @@ import static io.airlift.slice.Slices.wrappedBuffer;
  * @author Wong Kok-Lim
  */
 public class AESDecrypt {
+    public static Decrypter decrypter;
+
+    public AESDecrypt(Methods method) {
+        if(method.equals(Methods.CBC)) {
+            decrypter = new AESCBCDecrypter();
+        }
+    }
     /**
      * AES CBC decryption of AES CBC encrypted String.
      * @param secureData AES CBC encrypted String to be decrypted.
@@ -39,10 +47,10 @@ public class AESDecrypt {
      * @return AES CBC decrypted String.
      * @author Wong Kok-Lim
      */
-    protected static Slice stringAES(String secureData, String key, String iv) {
+    public static Slice stringAES(String secureData, String key, String iv) {
         String decrypt = null;
         try {
-            decrypt = new AESDecrypter().decryptString(secureData, key, iv);
+            decrypt = decrypter.decryptString(secureData, key, iv);
         } catch (NoSuchPaddingException | NoSuchAlgorithmException | InvalidKeyException | BadPaddingException | IllegalBlockSizeException | InvalidAlgorithmParameterException e) {
             e.printStackTrace();
         }
@@ -58,9 +66,9 @@ public class AESDecrypt {
      * @return Decrypted ByteBuffer.
      * @author Wong Kok-Lim
      */
-    protected static Slice byteBufferAES(String secureData, String key, String iv) {
+    public static Slice byteBufferAES(String secureData, String key, String iv) {
         ByteBuffer data = ByteBuffer.wrap(Decoder.decode(secureData));
-        ByteBuffer decrypt = new AESDecrypter().decryptByteBuffer(data, key, iv);
+        ByteBuffer decrypt = decrypter.decryptByteBuffer(data, key, iv);
         return wrappedBuffer(decrypt);
     }
 }

@@ -1,5 +1,6 @@
-package com.prestoudf.crypto;
+package com.trinoudf.crypto;
 
+import com.trinoudf.global.Methods;
 import io.airlift.slice.Slice;
 
 import javax.crypto.BadPaddingException;
@@ -31,6 +32,14 @@ import static io.airlift.slice.Slices.wrappedBuffer;
  * @author Wong Kok-Lim
  */
 public class AESEncrypt {
+    public static Encrypter encrypter;
+
+    public AESEncrypt(Methods method) {
+        if (method.equals(Methods.CBC)) {
+            encrypter = new AESCBCEncrypter();
+        }
+    }
+
     /**
      * AES CBC encryption of Strings.
      * @param privateData String to be encrypted with AES.
@@ -39,10 +48,10 @@ public class AESEncrypt {
      * @return AES Encrypted String.
      * @author Wong Kok-Lim
      */
-    protected static Slice stringAES(String privateData, String key, String iv) {
+    public static Slice stringAES(String privateData, String key, String iv) {
         String encrypt = null;
         try {
-            encrypt = new AESEncrypter().encryptString(privateData, key, iv);
+            encrypt = encrypter.encryptString(privateData, key, iv);
         }
         catch (NoSuchPaddingException | NoSuchAlgorithmException | InvalidKeyException | BadPaddingException | IllegalBlockSizeException | InvalidAlgorithmParameterException e) {
             e.printStackTrace();
@@ -59,8 +68,8 @@ public class AESEncrypt {
      * @return AES encrypted String.
      * @author Wong Kok-Lim
      */
-    protected static Slice byteBufferAES(ByteBuffer privateData, String key, String iv) {
-        ByteBuffer encrypt = new AESEncrypter().encryptByteBuffer(privateData, key, iv);
+    public static Slice byteBufferAES(ByteBuffer privateData, String key, String iv) {
+        ByteBuffer encrypt = encrypter.encryptByteBuffer(privateData, key, iv);
         return wrappedBuffer(encrypt);
     }
 }

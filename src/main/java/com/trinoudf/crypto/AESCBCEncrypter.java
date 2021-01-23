@@ -1,7 +1,6 @@
-package com.prestoudf.crypto;
+package com.trinoudf.crypto;
 
-import com.prestoudf.global.Config;
-import com.prestoudf.key.KeyGenerator;
+import com.trinoudf.key.KeyGenerator;
 
 import javax.crypto.*;
 import javax.crypto.spec.IvParameterSpec;
@@ -36,9 +35,10 @@ import java.security.NoSuchAlgorithmException;
  * @author Wong Kok-Lim
  * @example
  */
-public class AESEncrypter implements Encrypter {
+public class AESCBCEncrypter implements Encrypter {
+    public final String AES_TRANSFORM = "AES/CBC/PKCS5PADDING";
 
-    public AESEncrypter() {
+    public AESCBCEncrypter() {
     }
 
     /**
@@ -55,9 +55,9 @@ public class AESEncrypter implements Encrypter {
      */
     public String encryptString(String payload, String key, String initVector) throws NoSuchPaddingException, NoSuchAlgorithmException, InvalidKeyException, BadPaddingException, IllegalBlockSizeException, InvalidAlgorithmParameterException {
         IvParameterSpec iv = new IvParameterSpec(initVector.getBytes(StandardCharsets.UTF_8));
-        SecretKeySpec skeySpec = KeyGenerator.aesKeySpecGenerator(key);
+        SecretKeySpec skeySpec = KeyGenerator.aesShaKeySpecGenerator(key);
 
-        Cipher cipher = Cipher.getInstance(Config.AES_TRANSFORM);
+        Cipher cipher = Cipher.getInstance(AES_TRANSFORM);
         cipher.init(Cipher.ENCRYPT_MODE, skeySpec, iv);
         byte[] data = cipher.doFinal(payload.getBytes());
 
@@ -74,14 +74,14 @@ public class AESEncrypter implements Encrypter {
      */
     public ByteBuffer encryptByteBuffer(ByteBuffer payload, String key, String initVector) {
         IvParameterSpec iv = new IvParameterSpec(initVector.getBytes(StandardCharsets.UTF_8));
-        SecretKeySpec skeySpec = KeyGenerator.aesKeySpecGenerator(key);
+        SecretKeySpec skeySpec = KeyGenerator.aesShaKeySpecGenerator(key);
 
         if ( payload == null || !payload.hasRemaining() ) {
             return payload;
         }
         else {
             try {
-                Cipher cipher = Cipher.getInstance(Config.AES_TRANSFORM);
+                Cipher cipher = Cipher.getInstance(AES_TRANSFORM);
                 cipher.init(Cipher.ENCRYPT_MODE, skeySpec, iv);
                 ByteBuffer encrypted = ByteBuffer.allocate(cipher.getOutputSize(payload.remaining()));
                 cipher.doFinal(payload, encrypted);

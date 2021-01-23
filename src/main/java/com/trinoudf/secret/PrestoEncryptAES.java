@@ -1,9 +1,10 @@
-package com.prestoudf.secret;
+package com.trinoudf.secret;
 
-import com.prestoudf.crypto.AESEncrypt;
+import com.trinoudf.crypto.AESEncrypt;
+import com.trinoudf.global.Methods;
 import io.airlift.slice.Slice;
-import io.prestosql.spi.function.*;
-import io.prestosql.spi.type.StandardTypes;
+import io.trino.spi.function.*;
+import io.trino.spi.type.StandardTypes;
 
 import java.nio.ByteBuffer;
 
@@ -30,7 +31,9 @@ import java.nio.ByteBuffer;
 
 @ScalarFunction("encrypt_aes")
 @Description("Encrypts a string using cipher")
-public final class PrestoEncryptAES extends AESEncrypt {
+public final class PrestoEncryptAES {
+    private static final AESEncrypt aesEncrypt = new AESEncrypt(Methods.CBC);
+
     private PrestoEncryptAES() {
     }
     /**
@@ -46,7 +49,7 @@ public final class PrestoEncryptAES extends AESEncrypt {
     @TypeParameter("V")
     @SqlType(StandardTypes.VARCHAR)
     public static Slice encryptDoubleAES(@SqlNullable @SqlType("T") Double privateData, @SqlNullable @SqlType("U") Slice key, @SqlNullable @SqlType("V") Slice iv) {
-        return stringAES(privateData.toString(), key.toStringUtf8(), iv.toStringUtf8());
+        return aesEncrypt.stringAES(privateData.toString(), key.toStringUtf8(), iv.toStringUtf8());
     }
 
     /**
@@ -62,7 +65,7 @@ public final class PrestoEncryptAES extends AESEncrypt {
     @TypeParameter("V")
     @SqlType(StandardTypes.VARCHAR)
     public static Slice encryptLongAES(@SqlNullable @SqlType("T") Long privateData, @SqlNullable @SqlType("U") Slice key, @SqlNullable @SqlType("V") Slice iv) {
-        return stringAES(privateData.toString(), key.toStringUtf8(), iv.toStringUtf8());
+        return aesEncrypt.stringAES(privateData.toString(), key.toStringUtf8(), iv.toStringUtf8());
     }
 
     /**
@@ -78,7 +81,7 @@ public final class PrestoEncryptAES extends AESEncrypt {
     @TypeParameter("V")
     @SqlType(StandardTypes.VARCHAR)
     public static Slice encryptBoolAES(@SqlNullable @SqlType("T") Boolean privateData, @SqlNullable @SqlType("U") Slice key, @SqlNullable @SqlType("V") Slice iv) {
-        return stringAES(privateData.toString(), key.toStringUtf8(), iv.toStringUtf8());
+        return aesEncrypt.stringAES(privateData.toString(), key.toStringUtf8(), iv.toStringUtf8());
     }
 
     /**
@@ -94,6 +97,6 @@ public final class PrestoEncryptAES extends AESEncrypt {
     @TypeParameter("V")
     @SqlType(StandardTypes.VARCHAR)
     public static Slice encryptBinaryAES(@SqlNullable @SqlType("T") Slice privateData, @SqlNullable @SqlType("U") Slice key, @SqlNullable @SqlType("V") Slice iv) {
-        return byteBufferAES(ByteBuffer.wrap(privateData.getBytes()), key.toStringUtf8(), iv.toStringUtf8());
+        return aesEncrypt.byteBufferAES(ByteBuffer.wrap(privateData.getBytes()), key.toStringUtf8(), iv.toStringUtf8());
     }
 }
