@@ -27,10 +27,10 @@ import io.trino.spi.type.StandardTypes;
  * @author koklim
  * @example
  */
-public final class PrestoDecryptAES {
+public final class TrinoDecryptAES {
     private static final AESDecrypt aesDecrypt = new AESDecrypt(Methods.CBC);
 
-    private PrestoDecryptAES() {
+    private TrinoDecryptAES() {
     }
 
     /**

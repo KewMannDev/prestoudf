@@ -31,10 +31,10 @@ import java.nio.ByteBuffer;
 
 @ScalarFunction("encrypt_aes")
 @Description("Encrypts a string using cipher")
-public final class PrestoEncryptAES {
+public final class TrinoEncryptAES {
     private static final AESEncrypt aesEncrypt = new AESEncrypt(Methods.CBC);
 
-    private PrestoEncryptAES() {
+    private TrinoEncryptAES() {
     }
     /**
      * PrestoSQL user defined function for AES encryption of Strings.
