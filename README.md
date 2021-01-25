@@ -84,9 +84,9 @@ The following are the data types which will need to be cast to `VARCHAR` before 
 - DECIMAL
 - TIME
 
-<br/> e.g.
-<br/>`SELECT encrypt_aes(CAST(REAL '2.2' AS VARCHAR), 'aesEncryptionKey','encryptionIntVec');`
-<br/>`SELECT decrypt_aes('1VNUqYxcuI3V9mR57TQH6Q==', 'aesEncryptionKey','encryptionIntVec');`
+<br/>e.g.
+<br/> `SELECT encrypt_aes(CAST(REAL '2.2' AS VARCHAR), 'aesEncryptionKey','encryptionIntVec');`
+<br/> `SELECT decrypt_aes('1VNUqYxcuI3V9mR57TQH6Q==', 'aesEncryptionKey','encryptionIntVec');`
 
 The following are the data types which will need to be cast to `VARBINARY` before encrypting:
 - P4HyperLogLog
