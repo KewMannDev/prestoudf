@@ -19,7 +19,7 @@ Once the build is complete, execute the below commands (from the folder where th
 #### Trino UDF tested succesfully
 ![Successful Testing of UDF](https://media.giphy.com/media/If0etk7IQZL9aExA2q/giphy.gif)
 
-####Supported Data Types for Encryption and Decryption.
+#### Supported Data Types for Encryption and Decryption.
 Encryption is done with AES CBC. Please note that `decrypt_aes()` function return results as `VARCHAR`.
 - TIMESTAMP (<b>***Note:</b> decrypted result will be in EPOCH format)
   <br/> e.g. 
