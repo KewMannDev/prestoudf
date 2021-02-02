@@ -79,12 +79,12 @@ Encryption is done with AES CBC. Please note that `decrypt_aes()` function retur
   <br/> `SELECT encrypt_aes(cast(X'65683F' AS HyperLogLog),'aesEncryptionKey','encryptionIntVec');`
   <br/> `SELECT decrypt_aes('dHOVkKfJIRWVtakUgw+H6w==','aesEncryptionKey','encryptionIntVec');`
 
-####Binary Decryption
+###Binary Decryption
 Data can be decrypted to VARBINARY by using `decrypt_aes_binary()` function.
 <br/> e.g.
 <br/> `SELECT decrypt_aes_binary('dHOVkKfJIRWVtakUgw+H6w==', 'aesEncryptionKey','encryptionIntVec');`
 
-####Non Supported Data Types
+###Non Supported Data Types
 The following are the data types which will need to be cast to `VARCHAR` before encrypting:
 - REAL
 - DECIMAL
