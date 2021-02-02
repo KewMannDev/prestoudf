@@ -1,8 +1,14 @@
-# Trino UDF | Gradle
+# Trino UDF | Gradle | Docker
 
 The framework can be used to write, build and test User Defined Functions for Trino locally. I am using gradle file to build the jar. Find the steps below to build and test the UDF written here.
-- Clone the repo
-  `gradle clean build`
+- Clone the repo ```  git clone https://github.com/KewMannDev/prestoudf  ```
+- build the repo with Gradle: `gradle clean build`
+
+Once the build is complete, execute the below commands (from the folder where the make file exists)
+- ```  cd docker-trino-cluster  ```
+- ```  make all  ```
+- ```  cd kudu-trino-docker/docker-trino-cluster  ```  
+- ```  make run-with-logs ``` If you want to see the logs which will show that your UDF is loaded  
 
 #### Plugin Installation.
 1. Stop Trino service.
