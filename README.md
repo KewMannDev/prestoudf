@@ -1,7 +1,7 @@
 # Trino UDF | Gradle | Docker
 
-The framework can be used to write, build and test User Defined Functions for Trino locally. I am using gradle file to build the jar. Find the steps below to build and test the UDF written here.
-- Clone the repo ```  git clone https://github.com/KewMannDev/prestoudf  ```
+The framework can be used to write, build and test User Defined Functions for Trino locally. This project uses gradle file to build the jar. Find the steps below to build and test the UDF written here.
+- Clone the repo ```  git clone https://github.com/KewMannDev/trino-encryption-at-rest  ```
 - build the repo with Gradle: `gradle clean build`
 
 Once the build is complete, execute the below commands (from the folder where the make file exists)
