@@ -13,7 +13,7 @@ Once the build is complete, execute the below commands (from the folder where th
 #### Plugin Installation.
 1. Stop Trino service.
 2. Create a folder called `udfs` in Trino's plugin directory.
-3. Put `trinoudf-1.0.jar` into the `udfs` directory.
+3. Put `trino-encryption-at-rest-1.0.jar` into the `udfs` directory.
 4. Start Trino service.
 
 #### Trino UDF tested succesfully
