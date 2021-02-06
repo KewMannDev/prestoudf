@@ -7,7 +7,7 @@ The framework can be used to write, build and test User Defined Functions for Tr
 Once the build is complete, execute the below commands (from the folder where the make file exists)
 - ```  cd docker-trino-cluster  ```
 - ```  make all  ```
-- ```  cd kudu-trino-docker/docker-trino-cluster  ```  
+- ```  cd kudu-trino-docker/trino-cluster  ```  
 - ```  make run-with-logs ``` If you want to see the logs which will show that your UDF is loaded  
 
 #### Plugin Installation.
