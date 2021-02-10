@@ -139,7 +139,8 @@ public class UnitTest {
     @Test
     public void stressTestRealTime() throws SQLException {
         int i = 0;
-        while(true) {
+        boolean stresstest = false;
+        while(stresstest) {
             Connection connection = jdbcConnection();
             Statement stmt = getStatement(connection);
             String sql = "INSERT INTO bulk_100 VALUES(|row|,'os5wRVI8BhjtLUNhisuOA4trKjTPC6/FX+vvIrqlMeU=','Cx9kazlF9iBX8+GstGfzmg=','On46L6igJQl7PZ/snBPoZA==','On46L6igJQl7PZ/snBPoZA==','On46L6igJQl7PZ/snBPoZA==','GhgsnLAyrvt/cFubrTTJJg==','YePvTywrn1cI/uaz67Y7tA==','0rx4QxnflHc5ih1ledOZ1w==','T0b56F3RG+bNxvjIZ6xBOQ==','Fc+x3DhB8uKSRRxEzOTFXQ==','aEShsTcK6h8SpcOYC4xjJQ==','M/cxFtUM1jaL/WWtGNLKnvcuPLHcESKcvnh7TYp4Awg=','wwn+Xc80NKR8Rhnz/mtC3M8qXlr4wRTq/36kOgp0WBI=','T0b56F3RG+bNxvjIZ6xBOQ==')";
